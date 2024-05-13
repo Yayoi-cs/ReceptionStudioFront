@@ -1,31 +1,32 @@
-import Head from "next/head";
+import Head from "next/head"
 import {FaGoogle, FaRegEnvelope} from "react-icons/fa";
 import {MdLockOutline} from "react-icons/md";
 import {useState} from "react";
 import {useRouter} from "next/router";
-import Link from "next/link";
 
-export default function Login() {
+export default function Signup() {
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
-    const [jwt, setJwt] = useState('')
-    const router = useRouter()
-    const [errorMessage, setErrorMessage] = useState('')
+
+    const router = useRouter();
+    const [jwt, setJwt] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
     const handleChange = (e) => {
         const {name, value} = e.target;
         setFormData({
             ...formData,
             [name]: value,
         });
-    };
-
+    }
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             console.log(formData)
-            const response = await fetch('http://localhost:8080/login', {
+            const response = await fetch('http://localhost:8080/CreateUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,22 +36,21 @@ export default function Login() {
             if (response.ok) {
                 const jwt = await response.text();
                 const expires = new Date();
-                expires.setMonth(expires.getMonth() + 1)
-                document.cookie = `token=${jwt}; expires=${expires.toUTCString()}; path=/`;
-                router.push('/home')
+                expires.setDate(expires.getDate() + 1)
+                document.cookie = `jwt=${jwt}; expires=${expires.toUTCString()}; path=/`;
+                router.push('/verify')
             } else if (response.status == 401) {
-                setErrorMessage('Authentication failed.')
+
             }
         } catch (error) {
-            setErrorMessage('Something went wrong.')
+
         }
     }
 
     return (
         <div className={"flex flex-col items-center justify-center min-h-screen py-2"}>
             <Head>
-                <title>Log In</title>
-                <link rel={"icon"} href={"/public/favicon.ico"}/>
+                <title>Sign Up</title>
             </Head>
             <main className={"flex flex-col items-center justify-center w-full flex-1 px-20 text-center"}>
                 <div className={"bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl"}>
@@ -60,13 +60,13 @@ export default function Login() {
                         </div>
                         <div className={"py-10"}>
                             <h2 className={"text-3xl font-bold text-blue-600"}>
-                                Sign in to Account
+                                Create Account
                             </h2>
-                            <div className={"border-2 w-10 border-blue-600 inline-block mb-2"}></div>
+                            <div className={"border-2 w-10 border-blue-600 inline-block mb-2"}/>
                             <div className={"flex justify-center my-2"}>
                                 <a href={"http://localhost:8080/Oauth"}
-                                   className={"border-2 border-gray-200 rounded-full p-3 mx-1"}>
-                                    <FaGoogle className={"text-sm"}/>
+                                   className={"border-2 flex items-center border-gray-200 rounded-full p-3 mx-1"}>
+                                    <FaGoogle className={"text-sm mr-2"}/> Sign Up with Google
                                 </a>
                             </div>
                             <p className={"text-gray-600 my-3"}>use your email account</p>
@@ -85,25 +85,19 @@ export default function Login() {
                                 {errorMessage && <p className={"mb-2 text-red-600"}>{errorMessage}</p>}
                                 <button type={"submit"}
                                         className={"border-2 border-blue-600 rounded-full text-blue-600 px-12 py-2 inline-block font-semibold hover:text-white hover:bg-blue-600"}>Sign
-                                    In
+                                    Up
                                 </button>
                             </form>
 
                         </div>
                     </div>
-
                     <div className={"w-2/5 p-5 bg-blue-600 text-white rounded-tr-2xl rounded-br-2xl py-36 px-12"}>
-                        <h2 className={"text-3xl font-bold mb-2"}>Hello, Friend!</h2>
-                        <div className={"border-2 w-10 border-white inline-block mb-2"}></div>
-                        <p className={"mb-2"}>Fluently reception with us.</p>
-                        <Link href={"/signup"}
-                              className={"border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-blue-600"}>Sign
-                            Up</Link>
+
+
                     </div>
-
                 </div>
-
             </main>
         </div>
     )
+
 }
